@@ -118,4 +118,12 @@ public class Task {
         histories.add(history);
     }
 
+    public void addUser(User user) {
+        assignedTo.add(user);
+    }
+
+    public void removeUser(User user) {
+        assignedTo.remove(user);
+    }
+
 }

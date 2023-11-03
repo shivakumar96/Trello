@@ -88,7 +88,6 @@ public class TaskService implements CommonServiceAPI<Task> {
     @Override
     public void delete(Task task) {
         repository.deleteById(task.getTaskID());
-        
     }
 
     public void delete(User user, int taskID) {

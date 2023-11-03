@@ -1,6 +1,7 @@
 package edu.syr.oodproject.trelloclonesu.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.syr.oodproject.trelloclonesu.features.notification.email.SendEmail;
 import edu.syr.oodproject.trelloclonesu.models.status.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -93,5 +94,11 @@ public class User {
 
     public List<Comment> getComments() {
         return comments;
+    }
+
+    public void notifyUser(String message){
+        String email = this.getEmail();
+        SendEmail sendEmail = new SendEmail(email,message);
+        sendEmail.sendNotification();
     }
 }
