@@ -19,7 +19,7 @@ public class Task {
     private int taskID;
 
     @ManyToMany(mappedBy = "tasks",cascade = CascadeType.ALL)
-    private List<User> assignedTo;
+    private List<User> assignedTo = new ArrayList<>();
 
     private TaskStatus status;
 
@@ -27,7 +27,7 @@ public class Task {
     private String description;
 
     @OneToMany(mappedBy = "task",cascade = CascadeType.MERGE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.MERGE)
     @JsonIgnore

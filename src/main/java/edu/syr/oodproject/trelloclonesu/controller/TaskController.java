@@ -104,21 +104,26 @@ public class TaskController {
         return new ResponseEntity<>(commentDTOList,HttpStatus.OK);
     }
 
-    @PostMapping(path = "/tasks/{taskID}/comments")
+    @PutMapping(path = "/tasks/{taskID}/comments")
     public ResponseEntity<String> addAComment(@PathVariable int taskID ,@RequestBody Comment comment){
         commentService.save(comment,taskID);
         return new ResponseEntity<>("Comment added!",HttpStatus.OK);
     }
 
-    @GetMapping(path = "/tasks/{taskID}/user")
-    public ResponseEntity<List<UserDTO>> getAllUser(@PathVariable int taskID){
-
-        return null;
+    @GetMapping(path = "/tasks/{taskID}/users")
+    public ResponseEntity<List<User>> getAllUser(@PathVariable int taskID){
+        Task task =  taskService.get(taskID).orElseThrow(()->( new TaskNotFoundException("Task doesn't exists")));
+        return new ResponseEntity<>(task.getAssignedTo(),HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/tasks/{taskID}/user")
-    public ResponseEntity<String> DeleteUser(@PathVariable int taskID){
-
+    @PutMapping(path = "/tasks/{taskID}/users")
+    public ResponseEntity<List<UserDTO>> addUser(@PathVariable int taskID,@RequestBody User user){
+        taskService.save(user,taskID);
+        return null;
+    }
+    @DeleteMapping(path = "/tasks/{taskID}/users")
+    public ResponseEntity<String> DeleteUser(@PathVariable int taskID, @RequestBody User user){
+        taskService.delete(user,taskID);
         return new ResponseEntity<>("User Removed!",HttpStatus.OK);
     }
 

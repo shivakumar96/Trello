@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,7 +27,7 @@ public class User {
    @JoinColumn(name = "task_id",nullable = false)
    @JsonIgnore
    @OnDelete(action = OnDeleteAction.CASCADE)
-   private List<Task> tasks ;
+   private List<Task> tasks = new ArrayList<>();
 
     @NotNull(message = "email cannot be null")
     @Email
@@ -36,7 +37,7 @@ public class User {
     @JoinColumn(name = "task_id",nullable = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     private UserStatus userStatus;
 
@@ -86,4 +87,11 @@ public class User {
         tasks.add(task);
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
 }

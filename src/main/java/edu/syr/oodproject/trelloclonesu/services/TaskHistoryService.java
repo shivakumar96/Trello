@@ -1,7 +1,6 @@
 package edu.syr.oodproject.trelloclonesu.services;
 
 import edu.syr.oodproject.trelloclonesu.jpa.repository.TaskHistoryRepository;
-import edu.syr.oodproject.trelloclonesu.models.Task;
 import edu.syr.oodproject.trelloclonesu.models.TaskHistory;
 import edu.syr.oodproject.trelloclonesu.common.api.dao.CommonServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;

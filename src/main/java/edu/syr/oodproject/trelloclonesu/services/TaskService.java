@@ -1,9 +1,12 @@
 package edu.syr.oodproject.trelloclonesu.services;
 
+import edu.syr.oodproject.trelloclonesu.common.exceptions.TaskNotFoundException;
+import edu.syr.oodproject.trelloclonesu.common.exceptions.UserNotFoundException;
 import edu.syr.oodproject.trelloclonesu.jpa.repository.TaskRepository;
 import edu.syr.oodproject.trelloclonesu.models.Task;
 import edu.syr.oodproject.trelloclonesu.common.api.dao.CommonServiceAPI;
 import edu.syr.oodproject.trelloclonesu.models.TaskHistory;
+import edu.syr.oodproject.trelloclonesu.models.User;
 import edu.syr.oodproject.trelloclonesu.models.status.TaskStatus;
 import edu.syr.oodproject.trelloclonesu.validator.TaskValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ public class TaskService implements CommonServiceAPI<Task> {
     private TaskRepository repository;
     @Autowired
     private TaskHistoryService historyService;
+
+    @Autowired UserService userService;
 
     @Override
     public Optional<List<Task>> getAll() {
@@ -42,6 +47,23 @@ public class TaskService implements CommonServiceAPI<Task> {
         task.getHistories().add(history);
         repository.save(task);
         historyService.save(history);
+    }
+
+    public void save(User user, int taskID) {
+        Task task = get(taskID).orElseThrow(()-> new TaskNotFoundException("Task doesn't exist"));
+        User user1 = userService.get(user.getUserID()).orElseThrow(()-> new UserNotFoundException("User doesn't exist"));
+
+        user1.addTask(task);
+        task.getAssignedTo().add(user1);
+
+        TaskHistory history = new TaskHistory();
+        history.setDescription("Added User New User");
+        history.setUpdateTime(LocalDateTime.now());
+        history.setTask(task);
+        task.getHistories().add(history);
+        repository.save(task);
+        historyService.save(history);
+        userService.save(user1);
     }
 
     @Override
@@ -67,5 +89,21 @@ public class TaskService implements CommonServiceAPI<Task> {
     public void delete(Task task) {
         repository.deleteById(task.getTaskID());
         
+    }
+
+    public void delete(User user, int taskID) {
+        Task task = get(taskID).orElseThrow(()-> new TaskNotFoundException("Task doesn't exist"));
+        User user1 = userService.get(user.getUserID()).orElseThrow(()-> new UserNotFoundException("User doesn't exist"));
+        task.getAssignedTo().remove(user1);
+        user1.getTasks().remove(task);
+        TaskHistory history = new TaskHistory();
+        history.setDescription("Removed User New User");
+        history.setUpdateTime(LocalDateTime.now());
+        history.setTask(task);
+        task.getHistories().add(history);
+        repository.save(task);
+        historyService.save(history);
+        userService.save(user1);
+
     }
 }
