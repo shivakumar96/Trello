@@ -18,16 +18,18 @@ public class TaskValidator {
 
     public static String validateAndGetMessage(Task before, Task updated){
         StringBuilder message = new StringBuilder("");
-        boolean stateChange = before.getStatus().equals(updated.getStatus());
+        boolean stateChange = !before.getStatus().equals(updated.getStatus());
         boolean descriptionModified = before.getDescription().equals(updated.getDescription());
         if(stateChange){
             message.append(STATE_CHANGED).append(" from ").append(before.getStatus())
                     .append(" to ").append(updated.getStatus());
         }
-        if(descriptionModified)
-            if(stateChange)
-                message.append(" and ");
+        if(descriptionModified) {
+            if (stateChange)
+                message.append(" and,");
             message.append(DESCRIPTION_MODIFIED);
+        }
+
         return message.toString();
     }
 

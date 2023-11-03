@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @Entity
@@ -13,14 +15,16 @@ public class Comment {
     private int commentID;
 
    @NotNull(message = "task id cannot be null")
-   @ManyToOne
+   @ManyToOne(cascade = CascadeType.MERGE)
    @JoinColumn(name = "task_id",nullable = false)
    @JsonIgnore
+   @OnDelete(action = OnDeleteAction.CASCADE)
    private Task task;
 
     @NotNull(message = "user cannot be null")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Size(min = 1,message = "the comment description has to be min of 1 character")

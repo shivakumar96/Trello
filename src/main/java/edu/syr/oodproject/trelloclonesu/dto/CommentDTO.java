@@ -1,6 +1,7 @@
 package edu.syr.oodproject.trelloclonesu.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.syr.oodproject.trelloclonesu.models.Comment;
 
 public class CommentDTO {
     private String userName;
@@ -27,4 +28,7 @@ public class CommentDTO {
         this.comment = comment;
     }
 
+    public static CommentDTO convertToCommentDTO(Comment comment){
+        return new CommentDTO(comment.getUser().getName(),comment.getCommentDescription());
+    }
 }

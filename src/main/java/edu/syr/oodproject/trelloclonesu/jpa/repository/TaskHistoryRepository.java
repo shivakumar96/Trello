@@ -10,11 +10,5 @@ import java.util.List;
 
 public interface TaskHistoryRepository extends JpaRepository<TaskHistory,Integer> {
 
-    @Query("SELECT th FROM TaskHistory th WHERE th.task = :task")
-    public List<TaskHistory> findAllByTask(@Param("task") Task task);
-
-
-    @Query("DELETE FROM TaskHistory th WHERE th.task = :task")
-    void deleteAllHistoryByTask(@Param("task") Task task);
 
 }

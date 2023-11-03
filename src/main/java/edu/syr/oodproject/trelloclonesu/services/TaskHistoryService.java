@@ -35,7 +35,7 @@ public class TaskHistoryService implements CommonServiceAPI<TaskHistory> {
 
     @Override
     public Optional<TaskHistory> update(TaskHistory taskHistory) {
-        historyRepository.save(taskHistory);
+        historyRepository.saveAndFlush(taskHistory);
         return historyRepository.findById(taskHistory.getTaskHistoryID());
     }
 
@@ -44,8 +44,5 @@ public class TaskHistoryService implements CommonServiceAPI<TaskHistory> {
         historyRepository.deleteById(taskHistory.getTaskHistoryID());
     }
 
-    public void deleteHistoryForATask(Task task){
-        historyRepository.deleteAllHistoryByTask(task);
-    }
 
 }

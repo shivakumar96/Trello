@@ -4,13 +4,18 @@ import edu.syr.oodproject.trelloclonesu.common.exceptions.InvalidOperationExcept
 import edu.syr.oodproject.trelloclonesu.common.exceptions.TaskNotFoundException;
 import edu.syr.oodproject.trelloclonesu.common.exceptions.UserNotFoundException;
 import edu.syr.oodproject.trelloclonesu.common.logs.ApplicationLogger;
+import edu.syr.oodproject.trelloclonesu.dto.CommentDTO;
+import edu.syr.oodproject.trelloclonesu.dto.TaskDTO;
+import edu.syr.oodproject.trelloclonesu.dto.UserDTO;
 import edu.syr.oodproject.trelloclonesu.models.Comment;
 import edu.syr.oodproject.trelloclonesu.models.Task;
 import edu.syr.oodproject.trelloclonesu.models.TaskHistory;
+import edu.syr.oodproject.trelloclonesu.models.User;
 import edu.syr.oodproject.trelloclonesu.services.CommentService;
 import edu.syr.oodproject.trelloclonesu.services.TaskService;
 import edu.syr.oodproject.trelloclonesu.services.TaskHistoryService;
 import edu.syr.oodproject.trelloclonesu.services.UserService;
+import edu.syr.oodproject.trelloclonesu.validator.CommentValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,24 +39,28 @@ public class TaskController {
     private TaskHistoryService historyService;
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private ApplicationLogger applicationLogger;
+
+    private ApplicationLogger applicationLogger = ApplicationLogger.getApplicationLogger();
 
 
     @GetMapping(path = "/tasks")
-    public ResponseEntity<List<Task>> getAllTasks(){
+    public ResponseEntity<List<TaskDTO>> getAllTasks(){
         List<Task> taskList = taskService.getAll().orElse(new ArrayList<Task>());
-        return new ResponseEntity<>(taskList, HttpStatus.OK);
+        List<TaskDTO> tasksDTOList = new ArrayList<>();
+        for ( Task task: taskList)
+            tasksDTOList.add(TaskDTO.convertToTaskDTO(task));
+        return new ResponseEntity<>(tasksDTOList, HttpStatus.OK);
     }
 
     @GetMapping(path = "/tasks/{taskID}")
-    public ResponseEntity<Task> getTask(@PathVariable int taskID){
+    public ResponseEntity<TaskDTO> getTask(@PathVariable int taskID){
         Task task =  taskService.get(taskID).orElseThrow( ()-> new TaskNotFoundException("Task not found") );
-        return new ResponseEntity<Task>(task,HttpStatus.OK);
+        TaskDTO taskDTO = TaskDTO.convertToTaskDTO(task);
+        return new ResponseEntity<>(taskDTO,HttpStatus.OK);
     }
 
     @PostMapping(path = "/tasks")
-    public ResponseEntity<Task> addTask( @Valid @RequestBody Task task){
+    public ResponseEntity<TaskDTO> addTask(@Valid @RequestBody Task task){
         taskService.save(task);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -72,7 +81,9 @@ public class TaskController {
 
     @DeleteMapping(path = "/tasks/{taskID}")
     public ResponseEntity<String> deleteTask(@PathVariable int taskID){
-
+        Task task = taskService.get(taskID).
+                orElseThrow(()-> new InvalidOperationException("Cannot update a task which doesn't exists"));
+        taskService.delete(task);
         return new ResponseEntity<>("Successfully deleted",HttpStatus.OK);
     }
 
@@ -84,17 +95,31 @@ public class TaskController {
     }
 
     @GetMapping(path = "/tasks/{taskID}/comments")
-    public ResponseEntity<List<Comment>> getAllComment(@PathVariable int taskID){
-        return null;
+    public ResponseEntity<List<CommentDTO>> getAllComment(@PathVariable int taskID){
+        Task task = taskService.get(taskID).orElseThrow(()-> new UserNotFoundException("Task not found"));
+        List<Comment> comments = task.getComments();
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+        for (Comment comment: comments)
+            commentDTOList.add(CommentDTO.convertToCommentDTO(comment));
+        return new ResponseEntity<>(commentDTOList,HttpStatus.OK);
     }
 
     @PostMapping(path = "/tasks/{taskID}/comments")
-    public ResponseEntity<List<Comment>> addAComment(@PathVariable int taskID){
-        return null;
+    public ResponseEntity<String> addAComment(@PathVariable int taskID ,@RequestBody Comment comment){
+        commentService.save(comment,taskID);
+        return new ResponseEntity<>("Comment added!",HttpStatus.OK);
     }
 
     @GetMapping(path = "/tasks/{taskID}/user")
-    public ResponseEntity<List<Comment>> getAllUser(@PathVariable int taskID){
+    public ResponseEntity<List<UserDTO>> getAllUser(@PathVariable int taskID){
+
         return null;
     }
+
+    @DeleteMapping(path = "/tasks/{taskID}/user")
+    public ResponseEntity<String> DeleteUser(@PathVariable int taskID){
+
+        return new ResponseEntity<>("User Removed!",HttpStatus.OK);
+    }
+
 }

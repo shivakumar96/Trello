@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -20,18 +22,20 @@ public class User {
     @Size(min=2,message = "name should contain min of 2 character ")
     private String name;
 
-   @ManyToMany
+   @ManyToMany(cascade = CascadeType.MERGE)
    @JoinColumn(name = "task_id",nullable = false)
    @JsonIgnore
+   @OnDelete(action = OnDeleteAction.CASCADE)
    private List<Task> tasks ;
 
     @NotNull(message = "email cannot be null")
     @Email
     private String email;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinColumn(name = "task_id",nullable = false)
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> comments;
 
     private UserStatus userStatus;
@@ -66,6 +70,20 @@ public class User {
 
     public void setUserStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+    public void  addComment(Comment comment){
+        comments.add(comment);
+    }
+    public void addTask(Task task){
+        tasks.add(task);
     }
 
 }

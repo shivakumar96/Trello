@@ -1,10 +1,10 @@
 package edu.syr.oodproject.trelloclonesu.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.syr.oodproject.trelloclonesu.models.status.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,12 @@ import java.time.LocalDateTime;
 public class TaskHistory {
     @Id
     @GeneratedValue
+    @JsonIgnore
     private int taskHistoryID;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "task_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Task task;
     @NotNull

@@ -37,7 +37,7 @@ public class UserService implements CommonServiceAPI<User> {
 
     @Override
     public Optional<User> update(User user) {
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
         return userRepository.findById(user.getUserID());
     }
 

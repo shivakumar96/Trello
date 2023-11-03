@@ -18,7 +18,7 @@ public class Task {
     @GeneratedValue
     private int taskID;
 
-    @ManyToMany(mappedBy = "tasks")
+    @ManyToMany(mappedBy = "tasks",cascade = CascadeType.ALL)
     private List<User> assignedTo;
 
     private TaskStatus status;
@@ -26,10 +26,10 @@ public class Task {
     @Size(min = 5, message = "Description should have min of 5 character")
     private String description;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task",cascade = CascadeType.MERGE)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.MERGE)
     @JsonIgnore
     private List<TaskHistory> histories = new ArrayList<>();
 
@@ -117,6 +117,5 @@ public class Task {
     public void addHistory(TaskHistory history) {
         histories.add(history);
     }
-
 
 }
