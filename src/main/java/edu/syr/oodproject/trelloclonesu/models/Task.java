@@ -5,6 +5,8 @@ import edu.syr.oodproject.trelloclonesu.models.status.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,10 +20,16 @@ public class Task {
     @GeneratedValue
     private int taskID;
 
-    @ManyToMany(mappedBy = "tasks",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "tasks",cascade = CascadeType.MERGE)
     private List<User> assignedTo = new ArrayList<>();
 
     private TaskStatus status;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "board_id",nullable = false)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Board board;
 
     @Size(min = 5, message = "Description should have min of 5 character")
     private String description;

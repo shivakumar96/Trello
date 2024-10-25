@@ -15,7 +15,6 @@ import edu.syr.oodproject.trelloclonesu.services.CommentService;
 import edu.syr.oodproject.trelloclonesu.services.TaskService;
 import edu.syr.oodproject.trelloclonesu.services.TaskHistoryService;
 import edu.syr.oodproject.trelloclonesu.services.UserService;
-import edu.syr.oodproject.trelloclonesu.validator.CommentValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
